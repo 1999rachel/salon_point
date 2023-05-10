@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "879194025630",
+    "project_id": "salonpoint-cf7a7",
+    "storage_bucket": "salonpoint-cf7a7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:879194025630:android:3fa0814ca04bbe7b1d558f",
+        "android_client_info": {
+          "package_name": "com.example.saloon_point"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "879194025630-r9kt71dj0d4stcumjsl1tjbvftva1h40.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.saloon_point",
+            "certificate_hash": "40bc6a5dfcfeeabd1940b52ce60d80292009bb56"
+          }
+        },
+        {
+          "client_id": "879194025630-qtet09ua8l7re0unf906us3l7rde6a7o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBD5hQPcPBkg7wmX8OLsCBwP9pV3MJMFXY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "879194025630-qtet09ua8l7re0unf906us3l7rde6a7o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
