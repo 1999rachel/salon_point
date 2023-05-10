@@ -218,8 +218,14 @@ class _ServiceSelectionState extends State<ServiceSelection> {
                                             )),
                                         activeColor: ButtonColor,
                                         controlAffinity: ListTileControlAffinity.leading,
-                                        value: value,
-                                        onChanged: (value)=>setState(() =>this.value=value!));
+                                        value: service_data["status"],
+                                        onChanged: (bool? value)=>setState(() =>
+
+                                        FirebaseFirestore.instance.collection("services_db").doc(service_data.id).update({
+                                          'status': value!
+
+                                        })
+                                        ));
 
                                     // return Row(
                                     //   children: [
