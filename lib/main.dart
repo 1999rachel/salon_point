@@ -4,6 +4,7 @@ import 'package:saloon_point/SignUp/SignUp.dart';
 
 import 'Dashboard/Dashboard.dart';
 import 'LogIn/LogIn.dart';
+import 'SalonOwner/DeletAndAddService/HomePageAddAndDeleteServices.dart';
 import 'SplashScreen.dart';
 
 void main() async{
@@ -22,6 +23,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+      // routes: {
+      //   '/ServiceSelection': (context) => ServiceEditDeleteHomePage(salon_id: 'salon_id', selected_service_id: widget.selected_service_id,),
+      // },
+
+
 
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

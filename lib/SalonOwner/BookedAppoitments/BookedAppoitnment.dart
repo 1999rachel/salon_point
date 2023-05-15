@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import '../DeletAndAddService/HomePageAddAndDeleteServices.dart';
 
 class BookedAppoitments extends StatefulWidget {
-  const BookedAppoitments({Key? key}) : super(key: key);
+  String salon_id;
+  final List<String> selectedServiceIds;
+   BookedAppoitments({Key? key, required this.salon_id, required this.selectedServiceIds}) : super(key: key);
 
   @override
   State<BookedAppoitments> createState() => _BookedAppoitmentsState();
@@ -31,7 +33,7 @@ class _BookedAppoitmentsState extends State<BookedAppoitments> {
                   children: [
                     InkWell(
                       onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ServiceEditDeleteHomePage()));
+                        Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ServiceEditDeleteHomePage(salon_id: widget.salon_id, selectedServiceIds: [],)));
                       },
                       child: CircleAvatar(
                         backgroundColor: Colors.white,

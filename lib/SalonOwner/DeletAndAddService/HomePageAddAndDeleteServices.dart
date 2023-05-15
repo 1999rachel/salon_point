@@ -1,9 +1,12 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:full_screen_image_null_safe/full_screen_image_null_safe.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../utility/color.dart';
 import '../BookedAppoitments/BookedAppoitnment.dart';
 import '../SalonOwnerAccount/SalonOwnerAccount.dart';
 import '../ServiceSelection/ServiceSelection.dart';
@@ -11,7 +14,9 @@ import 'EditServices.dart';
 import 'SearchServiceModels.dart';
 
 class ServiceEditDeleteHomePage extends StatefulWidget {
-  const ServiceEditDeleteHomePage({Key? key}) : super(key: key);
+  String salon_id;
+  final List<String> selectedServiceIds;
+  ServiceEditDeleteHomePage({Key? key, required this.salon_id, required this.selectedServiceIds,}) : super(key: key);
 
   @override
   State<ServiceEditDeleteHomePage> createState() =>
@@ -28,7 +33,6 @@ class _ServiceEditDeleteHomePageState extends State<ServiceEditDeleteHomePage> {
     final salonprofile =
         await ImagePicker().pickImage(source: ImageSource.gallery);
     if (salonprofile == null) return null;
-
     final TemporarySalonProfile = File(salonprofile.path);
 
     setState(() {
@@ -103,18 +107,18 @@ class _ServiceEditDeleteHomePageState extends State<ServiceEditDeleteHomePage> {
             switch (index) {
               case 0:
                 Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => ServiceSelection()));
+                    builder: (context) => ServiceSelection(salon_id: widget.salon_id,)));
 
                 break;
 
               case 1:
                 Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => BookedAppoitments()));
+                    builder: (context) => BookedAppoitments(salon_id: widget.salon_id, selectedServiceIds: [],)));
                 break;
 
               case 2:
                 Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => SalonOwnerAccount()));
+                    builder: (context) => SalonOwnerAccount(salon_id :widget.salon_id, selectedServiceIds: [],)));
             }
           });
         },
@@ -223,8 +227,9 @@ class _ServiceEditDeleteHomePageState extends State<ServiceEditDeleteHomePage> {
                                                                     context)
                                                                 .push(MaterialPageRoute(
                                                                     builder:
+
                                                                         (context) =>
-                                                                            ServiceEditDeleteHomePage()));
+                                                                            ServiceEditDeleteHomePage(salon_id: widget.salon_id, selectedServiceIds: [], )));
                                                           },
                                                           child: Text(
                                                             "Keep it",
@@ -404,7 +409,7 @@ class _ServiceEditDeleteHomePageState extends State<ServiceEditDeleteHomePage> {
                             InkWell(
                               onTap: () {
                                 Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => ServiceSelection()));
+                                    builder: (context) => ServiceSelection(salon_id: widget.salon_id,)));
                               },
                               child: Container(
                                   decoration: BoxDecoration(
@@ -486,121 +491,162 @@ class _ServiceEditDeleteHomePageState extends State<ServiceEditDeleteHomePage> {
                 Expanded(
                   child: Container(
                     child: TabBarView(children: [
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount: displayServicesToEdit.length,
-                          itemBuilder: (context, index) {
-                            return SingleChildScrollView(
-                              child: Container(
-                                width: double.infinity,
-                                color: Color(0xffFBFBFB),
-                                // padding: EdgeInsets.only(top: 5,bottom: 5),
-                                margin: EdgeInsets.only(top: 5, bottom: 5),
-                                child: Container(
-                                  padding: EdgeInsets.only(
-                                      left: 20, right: 20, bottom: 10),
-                                  alignment: Alignment.topLeft,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(10),
-                                        child: InkWell(
-                                          onTap: () {
-                                            // Navigator.of(context).push(
-                                            //     MaterialPageRoute(
-                                            //         builder: (context) =>
-                                            //             MoreAboutService()));
-                                          },
-                                          child: Container(
-                                            height: 105,
-                                            width: 100,
-                                            child: FullScreenWidget(
-                                              child: Image.asset(
-                                                displayServicesToEdit[index]
-                                                    .service_image,
-                                                fit: BoxFit.cover,
+                      StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance
+                        .collection('service_type_db').where('service_id', whereIn:widget.selectedServiceIds)
+                        .snapshots(),
+
+                        builder: (BuildContext context, AsyncSnapshot snapshot) {
+                          if(snapshot.hasError){
+                            return Center(
+                              child:Text('Error: ${snapshot.error}'),
+                            );
+                          }
+                          if (!snapshot.hasData) {
+                            return Center(
+                              child: SpinKitSpinningLines(
+                                color: ButtonColor,
+                                size: 50,
+                              ),
+                            );
+                          }
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            Center(
+                              child: SpinKitSpinningLines(
+                                color: ButtonColor,
+                                size: 50,
+                              ),
+                            );
+                          }
+                          QuerySnapshot querysnapshot = snapshot.data;
+                          List<QueryDocumentSnapshot>
+                          DocumentSnapshotList = querysnapshot.docs;
+                          return  Expanded(
+                            child: ListView.builder(
+                              itemCount: DocumentSnapshotList.length,
+                              // itemCount: displayServicesToEdit.length,
+                              itemBuilder: (context, index) {
+                                QueryDocumentSnapshot service_type_data =
+                                DocumentSnapshotList[index];
+                                return SingleChildScrollView(
+                                  child: Container(
+                                    width: double.infinity,
+                                    color: Color(0xffFBFBFB),
+                                    // padding: EdgeInsets.only(top: 5,bottom: 5),
+                                    margin: EdgeInsets.only(top: 5, bottom: 5),
+                                    child: Container(
+                                      padding: EdgeInsets.only(
+                                          left: 20, right: 20, bottom: 10),
+                                      alignment: Alignment.topLeft,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.end,
+                                        children: [
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.circular(10),
+                                            child: InkWell(
+                                              onTap: () {
+                                                // Navigator.of(context).push(
+                                                //     MaterialPageRoute(
+                                                //         builder: (context) =>
+                                                //             MoreAboutService()));
+                                              },
+                                              child: Container(
+                                                height: 105,
+                                                width: 100,
+                                                child: FullScreenWidget(
+                                                  child: Image.asset("assets/video.jpeg",
+                                                    // displayServicesToEdit[index]
+                                                    //     .service_image,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                      ),
-                                      Container(
-                                        padding: EdgeInsets.only(
-                                            top: 20, bottom: 10, left: 15),
-                                        alignment: Alignment.topLeft,
-                                        child: Column(
-                                          mainAxisAlignment:
+                                          Container(
+                                            padding: EdgeInsets.only(
+                                                top: 20, bottom: 10, left: 15),
+                                            alignment: Alignment.topLeft,
+                                            child: Column(
+                                              mainAxisAlignment:
                                               MainAxisAlignment.start,
-                                          crossAxisAlignment:
+                                              crossAxisAlignment:
                                               CrossAxisAlignment.start,
-                                          children: [
-                                            Container(
-                                                child: Text(
-                                              displayServicesToEdit[index]
-                                                  .service_style,
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.w600),
-                                            )),
-                                            SizedBox(
-                                              height: 5,
-                                            ),
-                                            Container(
-                                              alignment: Alignment.topLeft,
-                                              child: Text(
-                                                "${displayServicesToEdit[index].service_cost} TzSh",
-                                                style: TextStyle(
-                                                    color: Color(0xff812727),
-                                                    fontWeight:
+                                              children: [
+                                                Container(
+                                                    child: Text(service_type_data[
+                                                    'service_type_name'],
+                                                      // displayServicesToEdit[index]
+                                                      //     .service_style,
+                                                      style: TextStyle(
+                                                          color: Colors.black,
+                                                          fontWeight: FontWeight.w600),
+                                                    )),
+                                                SizedBox(
+                                                  height: 5,
+                                                ),
+                                                Container(
+                                                  alignment: Alignment.topLeft,
+                                                  child: Text( '0 TzSh',
+                                                    // "${displayServicesToEdit[index].service_cost} TzSh",
+                                                    style: TextStyle(
+                                                        color: Color(0xff812727),
+                                                        fontWeight:
                                                         FontWeight.w600),
-                                              ),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: 55,
+                                                )
+                                              ],
                                             ),
-                                            SizedBox(
-                                              height: 55,
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                      Expanded(child: Container()),
-                                      Row(
-                                        children: [
-                                          IconButton(
-                                              onPressed: () {
-                                                Navigator.of(context).push(
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            EditServices()));
-                                              },
-                                              icon: Icon(
-                                                Icons.edit_note_outlined,
-                                                size: 24,
-                                                color: Colors.black,
-                                              )),
-                                          IconButton(
-                                              splashRadius: 20,
-                                              focusColor: Colors.red,
-                                              splashColor: Colors.red,
-                                              onPressed: () {
-                                                setState(() {});
+                                          ),
+                                          Expanded(child: Container()),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
 
-                                                // });
-                                              },
-                                              icon: Icon(
-                                                Icons.delete,
-                                                color: Colors.black,
-                                                size: 24,
-                                              ))
+                                              IconButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).push(
+                                                        MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                EditServices(salon_id: widget.salon_id, selectedServiceIds: [],)));
+                                                  },
+                                                  icon: Icon(
+                                                    Icons.edit_note_outlined,
+                                                    size: 24,
+                                                    color: Colors.black,
+                                                  )),
+                                              IconButton(
+                                                  splashRadius: 20,
+                                                  focusColor: Colors.red,
+                                                  splashColor: Colors.red,
+                                                  onPressed: () {
+                                                    setState(() {});
+
+                                                    // });
+                                                  },
+                                                  icon: Icon(
+                                                    Icons.delete,
+                                                    color: Colors.black,
+                                                    size: 24,
+                                                  ))
+                                            ],
+                                          )
                                         ],
-                                      )
-                                    ],
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
+                                );
+                              },
+                            ),
+                          );
+
+
+                        },
                       ),
                       Expanded(
                         child: ListView.builder(

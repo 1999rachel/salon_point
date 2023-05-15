@@ -351,7 +351,7 @@ class _SalonRegistrationState extends State<SalonRegistration> {
                                       //   Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ServiceSelection()));
 
                                       if (_formKey.currentState!.validate()) {
-                                        FirebaseFirestore.instance.collection('salon_db').doc().set({
+                                        FirebaseFirestore.instance.collection('salon_db').doc(_salonNameController.text).set({
                                           "salon_name":_salonNameController.text,
                                           "country":_countryController.text,
                                           "city":_cityController.text,
@@ -364,7 +364,7 @@ class _SalonRegistrationState extends State<SalonRegistration> {
 
                                         }).then((value) => Navigator.of(context).push(
                                             MaterialPageRoute(
-                                                builder: (context) => ServiceSelection()))
+                                                builder: (context) => ServiceSelection(salon_id: _salonNameController.text,)))
                                                     // ServiceSelection(salon_id: _salonNameController.text,)))
 
                                         );

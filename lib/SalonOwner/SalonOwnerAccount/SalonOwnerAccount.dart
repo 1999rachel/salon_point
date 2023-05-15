@@ -7,7 +7,9 @@ import 'package:image_picker/image_picker.dart';
 import '../DeletAndAddService/HomePageAddAndDeleteServices.dart';
 
 class SalonOwnerAccount extends StatefulWidget {
-  const SalonOwnerAccount({Key? key}) : super(key: key);
+  String salon_id;
+  final List<String> selectedServiceIds;
+   SalonOwnerAccount({Key? key, required this.salon_id, required this.selectedServiceIds}) : super(key: key);
 
   @override
   State<SalonOwnerAccount> createState() => _SalonOwnerAccountState();
@@ -93,7 +95,7 @@ class _SalonOwnerAccountState extends State<SalonOwnerAccount> {
                           ),
                           child: TextButton(
                             onPressed: (){
-                              Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ServiceEditDeleteHomePage()));
+                              Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ServiceEditDeleteHomePage(salon_id: widget.salon_id, selectedServiceIds: [],)));
                             },
                             child: CircleAvatar(
                                 radius: 15,
@@ -154,7 +156,7 @@ class _SalonOwnerAccountState extends State<SalonOwnerAccount> {
                                                 child: Text("Change Profile",style: TextStyle( color:Colors.black ),)),
                                             Divider(),
                                             TextButton(onPressed: (){
-                                              Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ServiceEditDeleteHomePage()));
+                                              Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ServiceEditDeleteHomePage(salon_id: widget.salon_id, selectedServiceIds: [],)));
 
                                             }, child:Text("Keep it",style: TextStyle(color: Color(0xffA76895)),)),
 

@@ -7,7 +7,9 @@ import 'package:image_picker/image_picker.dart';
 import 'HomePageAddAndDeleteServices.dart';
 
 class EditServices extends StatefulWidget {
-  const EditServices({Key? key}) : super(key: key);
+  String salon_id;
+  final List<String> selectedServiceIds;
+   EditServices({Key? key, required this.salon_id, required this.selectedServiceIds,}) : super(key: key);
 
   @override
   State<EditServices> createState() => _EditServicesState();
@@ -308,7 +310,7 @@ body: Container(
 
                         onPressed: (){
 
-                          Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ServiceEditDeleteHomePage ()));
+                          Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ServiceEditDeleteHomePage (salon_id: widget.salon_id, selectedServiceIds: [],)));
                           //  Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Tutorial()));
 
                         },
